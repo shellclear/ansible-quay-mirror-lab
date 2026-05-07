@@ -1,7 +1,7 @@
 # Lab - Automate Quay registry mirror using Ansible
 
 
-This repository contains ansible code to automate the configuration and mirror image repositories from an source organization to a destiny organization between different Quay instances running in containers.
+This repository contains ansible code to automate the configuration and mirror image repositories from an source organization to a destiny organization between different Quay instances.
 
 This lab is based on the Redhat official public documentation
 
