@@ -1,0 +1,116 @@
+---
+- name: "Create CA"
+  gather_facts: false
+  hosts: "all"
+  tags: "create_ca"
+
+  vars:
+    # ansible_python_interpreter: "auto_silent"
+    # collections_path: "{{ playbook_dir }}"
+    # secret_ca_passphrase: "CHANGEME"
+
+  tasks:
+    - name: "Ensure the directory exists"
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/certificates/"
+        state: directory
+        mode: '0755'
+
+    - name: "Create CA private key"
+      community.crypto.openssl_privatekey:
+        path: "{{ playbook_dir }}/certificates/ca.key"
+        # passphrase: "{{ secret_ca_passphrase }}"
+
+    - name: "Create certificate signing request (CSR) for CA certificate"
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: "{{ playbook_dir }}/certificates/ca.key"
+        # privatekey_passphrase: "{{ secret_ca_passphrase }}"
+        common_name: "Lab Localdomain CA"
+        use_common_name_for_san: false  # since we do not specify SANs, don't use CN as a SAN
+        basic_constraints:
+          - 'CA:TRUE'
+        basic_constraints_critical: true
+        key_usage:
+          - "keyCertSign"
+        key_usage_critical: true
+      register: "ca_csr"
+
+    - ansible.builtin.debug:
+        var: "ca_csr"
+
+    - name: "Create self-signed CA certificate from CSR"
+      community.crypto.x509_certificate:
+        path: "{{ playbook_dir }}/certificates/ca.pem"
+        csr_content: "{{ ca_csr.csr }}"
+        privatekey_path: "{{ playbook_dir }}/certificates/ca.key"
+        # privatekey_passphrase: "{{ secret_ca_passphrase }}"
+        provider: "selfsigned"
+
+- name: "Create certificates"
+  gather_facts: false
+  hosts: "all"
+  tags: "create_certs"
+
+  vars:
+    # ansible_python_interpreter: "auto_silent"
+    # collections_path: "{{ playbook_dir }}"
+    # secret_ca_passphrase: "CHANGEME."
+    domain_name: "lab.localdomain"
+    host_ip: "192.168.0.201"
+    organization: "Redhat"
+    organization_unit: Consulting
+    location: "Madrid"
+    country_code: "ES"
+
+    certificates_list:
+      - cn: "*.quay317.{{ domain_name }}"
+        o: "{{ organization }}"
+        ou: "{{ organization_unit }}"
+        l: "{{ location }}"
+        country: "{{ country_code }}"
+        san:
+          - "DNS:*.quay317.{{ domain_name }}"
+          - "IP:{{ host_ip }}"
+
+  tasks: 
+    - name: "Create private key for new certificate[s]"
+      community.crypto.openssl_privatekey:
+        path: "{{ playbook_dir }}/certificates/{{ item.cn }}.key"
+      loop: "{{ certificates_list }}"
+
+    - name: "Create certificate signing request (CSR) for new certificate[s]"
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: "{{ playbook_dir }}/certificates/{{ item.cn }}.key"
+        common_name: "{{ item.cn }}"
+        organization_name: "{{ item.o }}"
+        organizational_unit_name: "{{ item.ou }}"
+        locality_name: "{{ item.l }}"
+        country_name: "{{ item.country }}"
+        subject_alt_name: "{{ item.san }}"
+      register: "csr"
+      loop: "{{ certificates_list }}"
+
+    - ansible.builtin.debug:
+        var: csr
+
+    - name: "Sign certificate[s] with our CA"
+      community.crypto.x509_certificate_pipe:
+        csr_content: "{{ item.csr }}"
+        provider: "ownca"
+        ownca_path: "{{ playbook_dir }}/certificates/ca.pem"
+        ownca_privatekey_path: "{{ playbook_dir }}/certificates/ca.key"
+        # ownca_privatekey_passphrase: "{{ secret_ca_passphrase }}"
+        ownca_not_after: +365d  # valid for one year
+        ownca_not_before: "-1d"  # valid since yesterday
+      loop: "{{ csr.results }}"
+      register: "certificates"
+
+    - ansible.builtin.debug:
+        var: "certificates"
+
+    - name: "Write certificate file[s]"
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/certificates/{{ item.item.item.cn }}.pem"
+        content: "{{ item.certificate }}"
+      loop: "{{ certificates.results }}"
+...
