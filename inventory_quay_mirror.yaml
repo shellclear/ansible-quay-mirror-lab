@@ -1,0 +1,13 @@
+# SOURCE
+source_quay_hostname: "registry01.quay317.lab.localdomain:8883"
+source_quay_token: "e0DUQXxOQXBA2Ar640Z3xDQvJcGnCFUphrAXrzwh" # perms repo:read
+source_quay_username: "source_organization+read_only"
+source_quay_password: "4Q92CXXY90F4OCGAD4EUK9Q0GOYN972HR4I4IH3OGST6819PEDU00LSCXJUDG9JV" # perms read
+source_quay_organization: "source_organization"
+
+# DESTINATION
+quay_hostname: "registry02.quay317.lab.localdomain:8885"
+quay_org_app_token: "09W8x6erfwnF1RX8YnWRua8jHQjMYensM1RHsFQi" # perms: org:admin repo:create repo:admin repo:read repo:write user:read
+organization: "destination_organization"
+robot_account: "destination_organization+admin" # robot created manually.  perms write are defined by automation
+...

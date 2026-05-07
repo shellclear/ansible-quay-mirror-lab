@@ -1,0 +1,6 @@
+---
+collections:
+  - name: "containers.podman"
+  - name: "ansible.posix"
+  - name: "infra.quay_configuration"
+...
