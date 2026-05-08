@@ -1,0 +1,19 @@
+---
+access_token: "58TP5OLWX2IT5LN90239NSV53W9B7TR7E5URDAW2"
+quay_hostname: "registry02.quay317.lab.localdomain:8885"
+quay_organization: "destination_organization"
+quay_org_robots:
+  - name: "write"
+teams:
+  - name: operations
+    role: creator
+    members:
+      - destination_organization+write
+quay_api_token_perms:
+  - org:admin
+  - repo:admin
+  - repo:create
+  - repo:read
+  - repo:write
+  - user:read
+...
