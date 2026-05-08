@@ -212,6 +212,4 @@
         volume:
           - "{{ quay_config_vol }}:/conf/stack:z"
           - "{{ quay_storage_vol }}:/datastorage:z"
-      when:
-        - quay_hostname == 'registry02'
 ...
