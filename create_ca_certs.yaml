@@ -45,7 +45,8 @@
         privatekey_path: "{{ playbook_dir }}/certificates/ca.key"
         # privatekey_passphrase: "{{ secret_ca_passphrase }}"
         provider: "selfsigned"
-
+...
+---
 - name: "Create certificates"
   gather_facts: false
   hosts: "all"
