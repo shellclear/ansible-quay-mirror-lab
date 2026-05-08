@@ -1,4 +1,5 @@
 ---
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay_mirror.yaml quay_site_mirror.yaml 
 - name: "Ensure registry configurations"
   hosts: "localhost"
   connection: "local"
