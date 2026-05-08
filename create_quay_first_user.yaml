@@ -1,6 +1,9 @@
 ---
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay01.yaml create_quay_first_user.yaml
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay02.yaml create_quay_first_user.yaml
 - name: Bootstrapping a fresh Quay Container Registry installation
-  hosts: localhost
+  hosts: all
+  connection: "local"
 
   tasks:
     - name: Ensure the initial user exists
