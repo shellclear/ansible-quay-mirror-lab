@@ -1,4 +1,6 @@
 ---
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay01.yaml create_quay.yaml
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay02.yaml create_quay.yaml
 - name: Deploy Red Hat Quay Enterprise (PoC)
   hosts: all
   connection: local
@@ -201,7 +203,7 @@
 
     - name: Start Quay Mirror Worker container
       containers.podman.podman_container:
-        name: "{{ quay_hostname }}-quay-mirror"
+        name: "registry-quay-mirror"
         image: "{{ image_quay }}"
         state: started
         restart_policy: always
