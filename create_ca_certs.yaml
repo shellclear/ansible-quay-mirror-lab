@@ -1,4 +1,5 @@
 ---
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook create_ca_certs.yaml
 - name: "Create CA"
   gather_facts: false
   hosts: "all"
@@ -45,8 +46,7 @@
         privatekey_path: "{{ playbook_dir }}/certificates/ca.key"
         # privatekey_passphrase: "{{ secret_ca_passphrase }}"
         provider: "selfsigned"
-...
----
+
 - name: "Create certificates"
   gather_facts: false
   hosts: "all"
