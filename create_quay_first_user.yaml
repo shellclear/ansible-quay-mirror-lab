@@ -9,7 +9,7 @@
     - name: Ensure the initial user exists
       infra.quay_configuration.quay_first_user:
         username: quayadmin
-        email: quayadmin@example.com
+        email: quayadmin@lab.localdomain
         password: password
         create_token: true
         quay_host: https://{{ quay_fqdn }}:{{ https_port }}
@@ -21,13 +21,15 @@
       debug:
         msg: "Access token: {{ result['access_token'] }}"
 
-    - name: Ensure the user exists
-      infra.quay_configuration.quay_user:
-        username: user1
-        email: user1@example.com
-        password: password
-        state: present
-        quay_token: "{{ result['access_token'] }}"
-        quay_host: https://{{ quay_fqdn }}:{{ https_port }}
-        validate_certs: false
+    # - name: Ensure the user exists
+    #   infra.quay_configuration.quay_user:
+    #     username: ansible
+    #     email: ansible@lab.localdomain
+    #     password: password
+    #     state: present
+    #     quay_token: "{{ result['access_token'] }}"
+    #     quay_host: https://{{ quay_fqdn }}:{{ https_port }}
+    #     validate_certs: false
+
+# TODO: add perms to ansible user and move these tasks to seed playbook
 ...
