@@ -203,7 +203,7 @@
 
     - name: Start Quay Mirror Worker container
       containers.podman.podman_container:
-        name: "registry-quay-mirror"
+        name: "{{ quay_hostname }}-quay-mirror"
         image: "{{ image_quay }}"
         state: started
         restart_policy: always
