@@ -64,13 +64,40 @@
     country_code: "ES"
 
     certificates_list:
-      - cn: "*.quay317.{{ domain_name }}"
+      - cn: "registry01-quay314.{{ domain_name }}"
         o: "{{ organization }}"
         ou: "{{ organization_unit }}"
         l: "{{ location }}"
         country: "{{ country_code }}"
         san:
-          - "DNS:*.quay317.{{ domain_name }}"
+          - "DNS:registry01-quay314.{{ domain_name }}"
+          - "IP:{{ host_ip }}"
+
+      - cn: "registry02-quay314.{{ domain_name }}"
+        o: "{{ organization }}"
+        ou: "{{ organization_unit }}"
+        l: "{{ location }}"
+        country: "{{ country_code }}"
+        san:
+          - "DNS:registry02-quay314.{{ domain_name }}"
+          - "IP:{{ host_ip }}"
+
+      - cn: "registry01-quay317.{{ domain_name }}"
+        o: "{{ organization }}"
+        ou: "{{ organization_unit }}"
+        l: "{{ location }}"
+        country: "{{ country_code }}"
+        san:
+          - "DNS:registry01-quay317.{{ domain_name }}"
+          - "IP:{{ host_ip }}"
+
+      - cn: "registry02-quay317.{{ domain_name }}"
+        o: "{{ organization }}"
+        ou: "{{ organization_unit }}"
+        l: "{{ location }}"
+        country: "{{ country_code }}"
+        san:
+          - "DNS:registry02-quay317.{{ domain_name }}"
           - "IP:{{ host_ip }}"
 
   tasks: 
