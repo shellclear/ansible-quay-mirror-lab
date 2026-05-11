@@ -1,6 +1,12 @@
 ---
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay01.yaml create_quay.yaml
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay02.yaml create_quay.yaml
+# v314
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay314_registry01.yaml create_quay.yaml
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay314_registry02.yaml create_quay.yaml
+
+# v317
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay317_registry01.yaml create_quay.yaml
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay317_registry02.yaml create_quay.yaml
+
 - name: Deploy Red Hat Quay Enterprise (PoC)
   hosts: all
   connection: local
@@ -37,7 +43,6 @@
       dnf:
         name:
           - podman
-          # - container-tools
         state: present
 
     - name: Add DNS mapping in /etc/hosts
@@ -155,12 +160,13 @@
         state: started
         restart_policy: always
         env:
-          POSTGRES_USER: "{{ db_user }}"
-          POSTGRES_PASSWORD: "{{ db_password }}"
-          POSTGRES_DB: "{{ db_name }}"
+          POSTGRESQL_USER: "{{ db_user }}"
+          POSTGRESQL_PASSWORD: "{{ db_password }}"
+          POSTGRESQL_DATABASE: "{{ db_name }}"
+          POSTGRESQL_ADMIN_PASSWORD: "{{ db_admin_password }}"
         network: "{{ quay_network_name }}"
         volume:
-          - "{{ quay_db_vol }}:/var/lib/postgresql/data"
+          - "{{ quay_db_vol }}:/var/lib/pgsql/data:Z"
 
     - name: Wait for PostgreSQL to start and accept connections
       ansible.builtin.command: "podman exec {{ quay_hostname }}-postgresql-quay pg_isready -U {{ db_user }} -d {{ db_name }}"
@@ -183,7 +189,8 @@
         image: "{{ image_redis }}"
         state: started
         restart_policy: always
-        command: "redis-server --requirepass {{ redis_password }}"
+        env:
+         REDIS_PASSWORD: "{{ redis_password }}"
         network: "{{ quay_network_name }}"
         volume:
           - "{{ quay_redis_vol }}:/data"
@@ -211,5 +218,4 @@
         network: "{{ quay_network_name }}"
         volume:
           - "{{ quay_config_vol }}:/conf/stack:z"
-          - "{{ quay_storage_vol }}:/datastorage:z"
 ...

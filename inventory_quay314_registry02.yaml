@@ -1,0 +1,30 @@
+---
+quay_ip: "192.168.0.201"
+quay_fqdn: "registry02-quay314.lab.localdomain"
+quay_hostname: "registry02-quay314"
+https_port: 8886
+
+tls_cert_src_path: "{{ playbook_dir }}/certificates/registry02-quay314.lab.localdomain.pem"
+tls_key_src_path: "{{ playbook_dir }}/certificates/registry02-quay314.lab.localdomain.key"
+
+db_user: "quayuser"
+db_password: "root"
+db_name: "quaydb"
+db_admin_password: "adminpass"
+redis_password: "root"
+quay_secret_key: "a8c2744b-7004-4af2-bcee-e417e7bdd283"
+
+image_postgres: "registry.redhat.io/rhel8/postgresql-13"
+image_redis: "registry.redhat.io/rhel8/redis-6:1-110"
+image_quay: "registry.redhat.io/quay/quay-rhel8:v3.14"
+image_helper: "registry.access.redhat.com/ubi8/ubi-minimal:latest"
+
+quay_network_name: "quay_network"
+
+quay_config_vol: "{{ quay_hostname }}_config_volume"
+quay_storage_vol: "{{ quay_hostname }}_storage_volume"
+quay_db_vol: "{{ quay_hostname }}_db_volume"
+quay_redis_vol: "{{ quay_hostname }}_redis_volume"
+
+tmp_config_staging: "/tmp/quay_config_staging"
+...
