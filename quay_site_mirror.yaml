@@ -1,13 +1,17 @@
 ---
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay_mirror.yaml quay_site_mirror.yaml 
+# v314
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay314_mirror.yaml quay_site_mirror.yaml
+
+# v317
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_mirror.yaml quay_site_mirror.yaml
 - name: "Ensure registry configurations"
   hosts: "localhost"
   connection: "local"
   gather_facts: false
   module_defaults:
     group/infra.quay_configuration.quay:
-      quay_host: "{{ 'https://' + quay_hostname }}"
-      quay_token: "{{ quay_org_app_token }}"
+      quay_host: "{{ 'https://' + destination_quay_hostname }}"
+      quay_token: "{{ destination_quay_token }}"
       validate_certs: false
     ansible.builtin.uri:
       validate_certs: false
@@ -42,27 +46,27 @@
 
         done
 
-      register: primary_quay_organization_repos_list
+      register: source_quay_organization_repos_list
 
     - ansible.builtin.debug:
-        var: primary_quay_organization_repos_list.stdout_lines
+        var: source_quay_organization_repos_list.stdout_lines
     
     - name: "Set repolist"
       ansible.builtin.set_fact:
-        repolist: "{{ primary_quay_organization_repos_list.stdout_lines }}"
+        repolist: "{{ source_quay_organization_repos_list.stdout_lines }}"
     
     - name: "Ensure repositories exists in the organization"
       infra.quay_configuration.quay_repository:
-        name: "{{ organization + '/' + item }}"
+        name: "{{ destination_quay_organization + '/' + item }}"
         visibility: "private"
         state: "present"
       loop: "{{ repolist }}"
 
     - name: "Ensure mirroring is set for the existing repos"
       infra.quay_configuration.quay_repository_mirror:
-        name: "{{ organization + '/' + item }}"
+        name: "{{ destination_quay_organization + '/' + item }}"
         external_reference: "{{ source_quay_hostname + '/' + source_quay_organization + '/' + item }}"
-        robot_username: "{{ robot_account }}"
+        robot_username: "{{ destination_quay_username }}"
         is_enabled: true
         force_sync: false
         sync_interval: 300
