@@ -1,6 +1,11 @@
 ---
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay01.yaml create_quay_first_user.yaml
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay02.yaml create_quay_first_user.yaml
+# v314
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay314_registry01.yaml create_quay_first_user.yaml
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay314_registry02.yaml create_quay_first_user.yaml
+
+# v317
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_registry01.yaml create_quay_first_user.yaml
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_registry02.yaml create_quay_first_user.yaml
 - name: Bootstrapping a fresh Quay Container Registry installation
   hosts: all
   connection: "local"
@@ -20,16 +25,4 @@
     - name: Display the generated OAuth access token
       debug:
         msg: "Access token: {{ result['access_token'] }}"
-
-    # - name: Ensure the user exists
-    #   infra.quay_configuration.quay_user:
-    #     username: ansible
-    #     email: ansible@lab.localdomain
-    #     password: password
-    #     state: present
-    #     quay_token: "{{ result['access_token'] }}"
-    #     quay_host: https://{{ quay_fqdn }}:{{ https_port }}
-    #     validate_certs: false
-
-# TODO: add perms to ansible user and move these tasks to seed playbook
 ...

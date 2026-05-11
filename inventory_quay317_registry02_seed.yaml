@@ -1,0 +1,19 @@
+---
+access_token: "F7BHAUSPLX4MQZ1H4DCGB5EWGY87PL3NH1IE4DFH" # A token for automation application is created when the playbook create_quay_first_user.yaml runs under quayadmin user with full_access.
+quay_hostname: "registry02-quay317.lab.localdomain:8884"
+quay_organization: "destination_organization"
+quay_org_robots:
+  - name: "robot_accnt_write"
+teams:
+  - name: operations
+    role: creator
+    members:
+      - destination_organization+robot_accnt_write
+quay_api_token_perms:
+  - org:admin
+  - repo:admin
+  - repo:create
+  - repo:read
+  - repo:write
+  - user:read
+...
