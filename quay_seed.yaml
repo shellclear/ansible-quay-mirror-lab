@@ -1,11 +1,4 @@
 ---
-# v314
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay314_registry01_seed.yaml quay_seed.yaml
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay314_registry02_seed.yaml quay_seed.yaml
-
-# v317
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_registry01_seed.yaml quay_seed.yaml
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_registry02_seed.yaml quay_seed.yaml
 - name: Seed Quay Container Registry installation
   hosts: all
   connection: "local"

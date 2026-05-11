@@ -1,5 +1,4 @@
 ---
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook create_ca_certs.yaml
 - name: "Create CA"
   gather_facts: false
   hosts: "all"

@@ -1,12 +1,4 @@
 ---
-# v314
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay314_registry01.yaml create_quay.yaml
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay314_registry02.yaml create_quay.yaml
-
-# v317
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay317_registry01.yaml create_quay.yaml
-# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -K -e @inventory_quay317_registry02.yaml create_quay.yaml
-
 - name: Deploy Red Hat Quay Enterprise (PoC)
   hosts: all
   connection: local
