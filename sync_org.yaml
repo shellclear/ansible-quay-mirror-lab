@@ -36,7 +36,7 @@
 
       register: source_quay_organization_repos_list
 
-    - name: "Set repolist"
+    - name: "Set source repolist"
       ansible.builtin.set_fact:
         repolist_source: "{{ source_quay_organization_repos_list.stdout_lines }}"
 
@@ -72,7 +72,7 @@
 
       register: destionation_quay_organization_repos_list
 
-    - name: "Set repolist"
+    - name: "Set destination repolist"
       ansible.builtin.set_fact:
         repolist_destination: "{{ destionation_quay_organization_repos_list.stdout_lines }}"
 
