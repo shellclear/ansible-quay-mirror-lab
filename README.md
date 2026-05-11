@@ -74,6 +74,18 @@ ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook create_ca_certs.yaml
 # ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_mirror.yaml quay_site_mirror.yaml
 ```
 
+6. Sync organization repos
+
+```bash
+# v314
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay314_mirror.yaml sync_org.yaml
+```
+
+```bash
+# v317
+# ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_mirror.yaml sync_org.yaml
+```
+
 ## License
 
 GNU General Public License v3.0 or later.

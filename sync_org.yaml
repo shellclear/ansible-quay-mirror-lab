@@ -1,0 +1,118 @@
+---
+- name: "Compliance Sync - Org A to Org B"
+  hosts: "localhost"
+  gather_facts: false
+
+  tasks:
+    - name: "Query Quay(SOURCE) API to gather organization repositories"
+      ansible.builtin.shell: |
+        #!/usr/bin/env bash
+
+        TOKEN="{{ source_quay_token }}"
+        NAMESPACE="{{ source_quay_organization }}"
+        BASE_URL="{{ 'https://' + source_quay_hostname + '/api/v1' }}"
+
+        NEXT_PAGE=""
+        while true; do
+          if [[ -n "$NEXT_PAGE" ]]; then
+            URL="$BASE_URL/repository?namespace=$NAMESPACE&next_page=$NEXT_PAGE"
+          else
+            URL="$BASE_URL/repository?namespace=$NAMESPACE"
+          fi
+
+          RESPONSE=$(curl -k -s -X GET -H "Accept: application/json" -H "Authorization: Bearer $TOKEN" "$URL")
+
+          REPOS=$(echo "$RESPONSE" | jq -r '.repositories[]?.name')
+
+          echo "$REPOS"
+
+          NEXT_PAGE=$(echo "$RESPONSE" | jq -r '.next_page')
+
+          if [[ "$NEXT_PAGE" == "null" || -z "$NEXT_PAGE" ]]; then
+            break
+          fi
+
+        done
+
+      register: source_quay_organization_repos_list
+
+    - name: "Set repolist"
+      ansible.builtin.set_fact:
+        repolist_source: "{{ source_quay_organization_repos_list.stdout_lines }}"
+
+    - name: "Query Quay(destination) API to gather organization repositories"
+      ansible.builtin.shell: |
+        #!/usr/bin/env bash
+
+        TOKEN="{{ destination_quay_token }}"
+        NAMESPACE="{{ destination_quay_organization }}"
+        BASE_URL="{{ 'https://' + destination_quay_hostname + '/api/v1' }}"
+
+        NEXT_PAGE=""
+        while true; do
+          if [[ -n "$NEXT_PAGE" ]]; then
+            URL="$BASE_URL/repository?namespace=$NAMESPACE&next_page=$NEXT_PAGE"
+          else
+            URL="$BASE_URL/repository?namespace=$NAMESPACE"
+          fi
+
+          RESPONSE=$(curl -k -s -X GET -H "Accept: application/json" -H "Authorization: Bearer $TOKEN" "$URL")
+
+          REPOS=$(echo "$RESPONSE" | jq -r '.repositories[]?.name')
+
+          echo "$REPOS"
+
+          NEXT_PAGE=$(echo "$RESPONSE" | jq -r '.next_page')
+
+          if [[ "$NEXT_PAGE" == "null" || -z "$NEXT_PAGE" ]]; then
+            break
+          fi
+
+        done
+
+      register: destionation_quay_organization_repos_list
+
+    - name: "Set repolist"
+      ansible.builtin.set_fact:
+        repolist_destination: "{{ destionation_quay_organization_repos_list.stdout_lines }}"
+
+    - name: "DEBUG - Display repository list for source and destination"
+      ansible.builtin.debug:
+        msg: 
+          - "source_repos: {{ repolist_source }}"
+          - "destionation_repos: {{ repolist_destination }}"
+
+    # - ansible.builtin.pause:
+
+    - name: 3. GUARDRAIL - Abort if Org A returns empty
+      assert:
+        that:
+          - api_repos_a.json.repositories is defined
+          - api_repos_a.json.repositories | length > 0
+        fail_msg: "CAUTION: Org A returned 0 repositories at source. Aborting entire execution."
+      when: api_repos_b.json.repositories | default([]) | length > 0
+
+    - name: "4. Identify orphan and common repositories"
+      set_fact:
+        repos_to_delete: "{{ repolist_destination | difference(repolist_source) }}"
+        common_repos: "{{ repolist_destination | intersect(repolist_source) }}"
+
+    - name: "DEBUG - Display repositories to be removed and kept"
+      ansible.builtin.debug:
+        msg: 
+          - "repos_to_delete: {{ repos_to_delete }}"
+          - "common_repos: {{ common_repos }}"
+
+    # - ansible.builtin.pause:
+
+    - name: "5. Remove entire repositories in B that no longer exist in A"
+      infra.quay_configuration.quay_repository:
+        quay_host: "{{ quay_host_b }}"
+        quay_token: "{{ quay_token_b }}"
+        name: "{{ org_b }}/{{ item }}"
+        state: absent
+        verify_ssl: false
+      loop: "{{ repos_to_delete }}"
+      when: repos_to_delete | length > 0
+      throttle: 1
+...
