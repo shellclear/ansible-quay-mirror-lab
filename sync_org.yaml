@@ -107,12 +107,12 @@
 
     - name: "5. Remove entire repositories in B that no longer exist in A"
       infra.quay_configuration.quay_repository:
-        quay_host: "{{ quay_host_b }}"
-        quay_token: "{{ quay_token_b }}"
-        name: "{{ org_b }}/{{ item }}"
+        quay_host: "{{ destination_quay_hostname }}"
+        quay_token: "{{ destination_quay_token }}"
+        name: "{{ destination_quay_organization }}/{{ item }}"
         state: absent
         verify_ssl: false
       loop: "{{ repos_to_delete }}"
       when: repos_to_delete | length > 0
-      throttle: 1
+      # throttle: 1
 ...
