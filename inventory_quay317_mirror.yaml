@@ -1,16 +1,15 @@
 ---
 # SOURCE
 source_quay_hostname: "registry01-quay317.lab.localdomain:8883"
-source_quay_token: "PqQqjuUH4c9CjQswhFflpJ3AyCsjy7iuhQ3pTrWh" # oauth app token perms: <repo:read>
+source_quay_token: "" # oauth app token perms: <repo:read>
 source_quay_username: "source_organization+robot_accnt_read" # robotaccount
-source_quay_password: "SX7QB89BZYS74Q5COT8MRZ1UECCBZ17SDQMIM247SCGOASVAO7J6SGT32I29YF5U" # robotaccount perms: read
+source_quay_password: "" # robotaccount perms: read
 source_quay_organization: "source_organization"
 
 # DESTINATION
 destination_quay_hostname: "registry02-quay317.lab.localdomain:8884"
-destination_quay_token: "CbryYgOlHLPBH58WsLDBdiNARJ9TmnhRpiDYPLSq" # oauth app token perms: <org:admin repo:create repo:admin repo:read repo:write user:read>
+destination_quay_token: "" # oauth app token perms: <org:admin repo:create repo:admin repo:read repo:write user:read>
 destination_quay_username: "destination_organization+robot_accnt_write" # robotaccount perms created manually.  perms write are defined by automation
-# token_robotaccount:
-# source_quay_password: 0X47LBP30H8RAUJSUA6067JXO1TNPG8TOS0QBIY6CGZL9I4A84HN3IJ5FT812JJ9
+# source_quay_password: ""
 destination_quay_organization: "destination_organization"
 ...

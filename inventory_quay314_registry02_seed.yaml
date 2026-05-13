@@ -1,5 +1,5 @@
 ---
-access_token: "12ISWYIHRZH82A4IV2UFOVOTR1YPE35H2WAXCL7J" # A token for automation application is created when the playbook create_quay_first_user.yaml runs under quayadmin user with full_access.
+access_token: "" # A token for automation application is created when the playbook create_quay_first_user.yaml runs under quayadmin user with full_access.
 quay_hostname: "registry02-quay314.lab.localdomain:8886"
 quay_organization: "destination_organization"
 quay_org_robots:

@@ -1,5 +1,5 @@
 ---
-access_token: "IBIY3C0Y1DUDYPD9X7UMNWMAM17E0G1DMX7R37RE" # A token for automation application is created when the playbook create_quay_first_user.yaml runs under quayadmin user with full_access.
+access_token: "" # A token for automation application is created when the playbook create_quay_first_user.yaml runs under quayadmin user with full_access.
 quay_hostname: "registry01-quay314.lab.localdomain:8885"
 quay_organization: "source_organization"
 
@@ -16,129 +16,129 @@ quay_api_token_perms:
   - repo:read
 
 quay_organization_repos:
-  - name: public_repo01
+  - name: public_repo001
     visibility: public
 
-  - name: private_repo01
+  - name: private_repo001
     perms:
       - name: source_organization+robot_accnt_read
         role: read
-  - name: private_repo002
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo003
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo004
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo005
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo006
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo007
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo008
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo009
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo010
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo011
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo012
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo013
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo014
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo015
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo016
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo017
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo018
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo019
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo020
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo021
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo022
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo023
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo024
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo025
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo026
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo027
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo028
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo029
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
-  - name: private_repo030
-    perms:
-      - name: source_organization+robot_accnt_read
-        role: read
+  # - name: private_repo002
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo003
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo004
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo005
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo006
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo007
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo008
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo009
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo010
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo011
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo012
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo013
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo014
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo015
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo016
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo017
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo018
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo019
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo020
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo021
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo022
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo023
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo024
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo025
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo026
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo027
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo028
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo029
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
+  # - name: private_repo030
+  #   perms:
+  #     - name: source_organization+robot_accnt_read
+  #       role: read
   # - name: private_repo031
   #   perms:
   #     - name: source_organization+robot_accnt_read
