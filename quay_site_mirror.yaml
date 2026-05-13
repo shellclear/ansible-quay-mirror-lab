@@ -3,21 +3,30 @@
   hosts: "localhost"
   connection: "local"
   gather_facts: false
+  vars:
+    _source_quay_hostname: "{{ source_quay_hostname | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_HOSTNAME')) | mandatory }}"
+    _source_quay_token: "{{ source_quay_token | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_TOKEN')) | mandatory }}"
+    _source_quay_validate_certs: "{{ source_quay_validate_certs | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_VALIDATE_CERTS')) | default('false') }}"
+    _source_quay_organization: "{{ source_quay_organization | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_ORGANIZATION')) | mandatory }}"
+    _source_quay_username: "{{ source_quay_username | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_USERNAME')) | mandatory }}"
+    _source_quay_password: "{{ source_quay_password | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_PASSWORD')) | mandatory }}"
+    _destination_quay_organization: "{{ destination_quay_organization | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_ORGANIZATION')) | mandatory }}"
+    _destination_quay_username: "{{ destination_quay_username | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_USERNAME')) | mandatory }}"
+    _skopeo_tmout: "{{ skopeo_tmout | default('300') }}"
   module_defaults:
     group/infra.quay_configuration.quay:
-      quay_host: "{{ 'https://' + destination_quay_hostname }}"
-      quay_token: "{{ destination_quay_token }}"
-      validate_certs: false
-    ansible.builtin.uri:
-      validate_certs: false
+      quay_host: "{{ destination_quay_hostname | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_HOSTNAME')) | mandatory }}"
+      quay_token: "{{ destination_quay_token | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_TOKEN')) | mandatory }}"
+      validate_certs: "{{ destination_quay_validate_certs | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_VALIDATE_CERTS')) | default('false') | bool }}"
+
   tasks:
     - name: "Query primary Quay API to gather organization repositories"
       ansible.builtin.shell: |
         #!/usr/bin/env bash
 
-        TOKEN="{{ source_quay_token }}"
-        NAMESPACE="{{ source_quay_organization }}"
-        BASE_URL="{{ 'https://' + source_quay_hostname + '/api/v1' }}"
+        TOKEN="{{ _source_quay_token }}"
+        NAMESPACE="{{ _source_quay_organization }}"
+        BASE_URL="{{ 'https://' + _source_quay_hostname + '/api/v1' }}"
 
         NEXT_PAGE=""
         while true; do
@@ -44,6 +53,9 @@
       register: source_quay_organization_repos_list
 
     - ansible.builtin.debug:
+        var: source_quay_organization_repos_list
+
+    - ansible.builtin.debug:
         var: source_quay_organization_repos_list.stdout_lines
     
     - name: "Set repolist"
@@ -52,16 +64,16 @@
     
     - name: "Ensure repositories exists in the organization"
       infra.quay_configuration.quay_repository:
-        name: "{{ destination_quay_organization + '/' + item }}"
+        name: "{{ _destination_quay_organization + '/' + item }}"
         visibility: "private"
         state: "present"
       loop: "{{ repolist }}"
 
     - name: "Ensure mirroring is set for the existing repos"
       infra.quay_configuration.quay_repository_mirror:
-        name: "{{ destination_quay_organization + '/' + item }}"
-        external_reference: "{{ source_quay_hostname + '/' + source_quay_organization + '/' + item }}"
-        robot_username: "{{ destination_quay_username }}"
+        name: "{{ _destination_quay_organization + '/' + item }}"
+        external_reference: "{{ _source_quay_hostname + '/' + _source_quay_organization + '/' + item }}"
+        robot_username: "{{ _destination_quay_username }}"
         is_enabled: true
         force_sync: false
         sync_interval: 300
@@ -69,8 +81,8 @@
         # sync_start_date: "2026-05-07T16:50:00Z" # date -I'ns' -u
         image_tags:
           - '*'
-        external_registry_username: "{{ source_quay_username }}"
-        external_registry_password: "{{ source_quay_password }}"
-        skopeo_timeout: "{{ skopeo_tmout | default(omit) }}"
+        external_registry_username: "{{ _source_quay_username }}"
+        external_registry_password: "{{ _source_quay_password }}"
+        skopeo_timeout: "{{ _skopeo_tmout | default(omit) }}"
       loop: "{{ repolist }}"
 ...

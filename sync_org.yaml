@@ -1,16 +1,29 @@
 ---
 - name: "Compliance Sync - Org A to Org B"
   hosts: "localhost"
+  connection: "local"
   gather_facts: false
-
+  vars:
+    _source_quay_hostname: "{{ source_quay_hostname | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_HOSTNAME')) | mandatory }}"
+    _source_quay_token: "{{ source_quay_token | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_TOKEN')) | mandatory }}"
+    _source_quay_validate_certs: "{{ source_quay_validate_certs | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_VALIDATE_CERTS')) | default('false') }}"
+    _source_quay_organization: "{{ source_quay_organization | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_ORGANIZATION')) | mandatory }}"
+    _source_quay_username: "{{ source_quay_username | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_USERNAME')) | mandatory }}"
+    _source_quay_password: "{{ source_quay_password | default(lookup('ansible.builtin.env', 'SOURCE_QUAY_PASSWORD')) | mandatory }}"
+    _destination_quay_hostname: "{{ destination_quay_hostname | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_HOSTNAME')) | mandatory }}"
+    _destination_quay_token: "{{ destination_quay_token | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_TOKEN')) | mandatory }}"
+    _destination_validate_certs: "{{ destination_quay_validate_certs | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_VALIDATE_CERTS')) | default('false') | bool }}"
+    _destination_quay_organization: "{{ destination_quay_organization | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_ORGANIZATION')) | mandatory }}"
+    _destination_quay_username: "{{ destination_quay_username | default(lookup('ansible.builtin.env', 'DESTINATION_QUAY_USENAME')) | mandatory }}"
+    _skopeo_tmout: "{{ skopeo_tmout | default('300') }}"
   tasks:
     - name: "Query Quay(SOURCE) API to gather organization repositories"
       ansible.builtin.shell: |
         #!/usr/bin/env bash
 
-        TOKEN="{{ source_quay_token }}"
-        NAMESPACE="{{ source_quay_organization }}"
-        BASE_URL="{{ 'https://' + source_quay_hostname + '/api/v1' }}"
+        TOKEN="{{ _source_quay_token }}"
+        NAMESPACE="{{ _source_quay_organization }}"
+        BASE_URL="{{ 'https://' + _source_quay_hostname + '/api/v1' }}"
 
         NEXT_PAGE=""
         while true; do
@@ -44,9 +57,9 @@
       ansible.builtin.shell: |
         #!/usr/bin/env bash
 
-        TOKEN="{{ destination_quay_token }}"
-        NAMESPACE="{{ destination_quay_organization }}"
-        BASE_URL="{{ 'https://' + destination_quay_hostname + '/api/v1' }}"
+        TOKEN="{{ _destination_quay_token }}"
+        NAMESPACE="{{ _destination_quay_organization }}"
+        BASE_URL="{{ 'https://' + _destination_quay_hostname + '/api/v1' }}"
 
         NEXT_PAGE=""
         while true; do
@@ -87,10 +100,10 @@
     - name: 3. GUARDRAIL - Abort if Org A returns empty
       assert:
         that:
-          - api_repos_a.json.repositories is defined
-          - api_repos_a.json.repositories | length > 0
+          - repolist_source is defined
+          - repolist_source | length > 0
         fail_msg: "CAUTION: Org A returned 0 repositories at source. Aborting entire execution."
-      when: api_repos_b.json.repositories | default([]) | length > 0
+      when: repolist_destination | default([]) | length > 0
 
     - name: "4. Identify orphan and common repositories"
       set_fact:
@@ -107,9 +120,9 @@
 
     - name: "5. Remove entire repositories in B that no longer exist in A"
       infra.quay_configuration.quay_repository:
-        quay_host: "{{ destination_quay_hostname }}"
-        quay_token: "{{ destination_quay_token }}"
-        name: "{{ destination_quay_organization }}/{{ item }}"
+        quay_host: "{{ _destination_quay_hostname }}"
+        quay_token: "{{ _destination_quay_token }}"
+        name: "{{ _destination_quay_organization }}/{{ item }}"
         state: absent
         verify_ssl: false
       loop: "{{ repos_to_delete }}"
