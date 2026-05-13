@@ -1,1 +1,3 @@
 ansible-dev-tools
+ansible-builder
+ansible-navigator

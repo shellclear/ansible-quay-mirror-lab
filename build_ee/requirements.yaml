@@ -1,0 +1,4 @@
+---
+collections:
+  - name: infra.quay_configuration
+...
