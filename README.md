@@ -70,8 +70,57 @@ ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook create_ca_certs.yaml
 ```
 
 ```bash
+# v314
+ansible-navigator run quay_site_mirror.yaml \
+  --eei=registry.lab.localdomain:5000/ppacific/ee-custom-rhel9:latest \
+  --lf=/tmp/ansible-navigator-log.json \
+  --pae=false \
+  --co='--net=quay_network' \
+  --pp=missing \
+  --pa='--tls-verify=false' \
+  --mode=stdout \
+  -- \
+  -e @inventory_quay314_mirror.yaml
+```
+
+```bash
+# v314 using vars
+ansible-navigator run quay_site_mirror.yaml \
+  --eei=registry.lab.localdomain:5000/ppacific/ee-custom-rhel9:latest \
+  --lf=/tmp/ansible-navigator-log.json \
+  --pae=false \
+  --co='--net=quay_network' \
+  --pp=missing \
+  --pa='--tls-verify=false' \
+  --senv SOURCE_QUAY_HOSTNAME=registry01-quay314.lab.localdomain:8885 \
+  --senv SOURCE_QUAY_TOKEN=K2IAyatLW1YJsAAbhmRV84MZFgrMjccKhCFs8pm9 \
+  --senv SOURCE_QUAY_ORGANIZATION=source_organization \
+  --senv SOURCE_QUAY_USERNAME=source_organization+robot_accnt_read \
+  --senv SOURCE_QUAY_PASSWORD=TP2CMZYVZISHCCXZ1F1O6VQUUO0D9K0ZH06TYZP64VR8ESSG8U9MV22MA50RXA0F \
+  --senv DESTINATION_QUAY_ORGANIZATION=destination_organization \
+  --senv DESTINATION_QUAY_USENAME=destination_organization+robot_accnt_write \
+  --senv DESTINATION_QUAY_HOSTNAME=registry02-quay314.lab.localdomain:8886 \
+  --senv DESTINATION_QUAY_TOKEN=SMHKkGvW5Lv6DobTrhMvXcihTQ0wJQW9ezhAQNkr \
+  --mode=stdout
+```
+
+```bash
 # v317
 # ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_mirror.yaml quay_site_mirror.yaml
+```
+
+```bash
+# v317
+ansible-navigator run quay_site_mirror.yaml \
+  --eei=registry.lab.localdomain:5000/ppacific/ee-custom-rhel9:latest \
+  --lf=/tmp/ansible-navigator-log.json \
+  --pae=false \
+  --co='--net=quay_network' \
+  --pp=missing \
+  --pa='--tls-verify=false' \
+  --mode=stdout \
+  -- \
+  -e @inventory_quay317_mirror.yaml
 ```
 
 6. Sync organization repos
@@ -82,8 +131,57 @@ ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook create_ca_certs.yaml
 ```
 
 ```bash
+# v314
+ansible-navigator run sync_org.yaml \
+  --eei=registry.lab.localdomain:5000/ppacific/ee-custom-rhel9:latest \
+  --lf=/tmp/ansible-navigator-log.json \
+  --pae=false \
+  --co='--net=quay_network' \
+  --pp=missing \
+  --pa='--tls-verify=false' \
+  --mode=stdout \
+  -- \
+  -e @inventory_quay314_mirror.yaml
+```
+
+```bash
+# v314 using vars
+ansible-navigator run sync_org.yaml \
+  --eei=registry.lab.localdomain:5000/ppacific/ee-custom-rhel9:latest \
+  --lf=/tmp/ansible-navigator-log.json \
+  --pae=false \
+  --co='--net=quay_network' \
+  --pp=missing \
+  --pa='--tls-verify=false' \
+  --senv SOURCE_QUAY_HOSTNAME=registry01-quay314.lab.localdomain:8885 \
+  --senv SOURCE_QUAY_TOKEN=K2IAyatLW1YJsAAbhmRV84MZFgrMjccKhCFs8pm9 \
+  --senv SOURCE_QUAY_ORGANIZATION=source_organization \
+  --senv SOURCE_QUAY_USERNAME=source_organization+robot_accnt_read \
+  --senv SOURCE_QUAY_PASSWORD=TP2CMZYVZISHCCXZ1F1O6VQUUO0D9K0ZH06TYZP64VR8ESSG8U9MV22MA50RXA0F \
+  --senv DESTINATION_QUAY_ORGANIZATION=destination_organization \
+  --senv DESTINATION_QUAY_USENAME=destination_organization+robot_accnt_write \
+  --senv DESTINATION_QUAY_HOSTNAME=registry02-quay314.lab.localdomain:8886 \
+  --senv DESTINATION_QUAY_TOKEN=SMHKkGvW5Lv6DobTrhMvXcihTQ0wJQW9ezhAQNkr \
+  --mode=stdout
+```
+
+```bash
 # v317
 # ANSIBLE_COLLECTIONS_PATH=$PWD ansible-playbook -e @inventory_quay317_mirror.yaml sync_org.yaml
+```
+
+```bash
+# v317
+ansible-navigator run sync_org.yaml \
+  --eei=localhost/ansible-custom/ee-custom \
+  --lf=/tmp/ansible-navigator-log.json \
+  --pae=false \
+  --co='--net=quay_network' \
+  --pp=missing \
+  --pa='--tls-verify=false' \
+  --mode=stdout \
+  -- \
+  -e @inventory_quay317_mirror.yaml
 ```
 
 ## License
