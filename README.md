@@ -98,7 +98,7 @@ ansible-navigator run quay_site_mirror.yaml \
   --senv SOURCE_QUAY_USERNAME=source_organization+robot_accnt_read \
   --senv SOURCE_QUAY_PASSWORD= \
   --senv DESTINATION_QUAY_ORGANIZATION=destination_organization \
-  --senv DESTINATION_QUAY_USENAME=destination_organization+robot_accnt_write \
+  --senv DESTINATION_QUAY_USERNAME=destination_organization+robot_accnt_write \
   --senv DESTINATION_QUAY_HOSTNAME=registry02-quay314.lab.localdomain:8886 \
   --senv DESTINATION_QUAY_TOKEN= \
   --mode=stdout
@@ -159,7 +159,7 @@ ansible-navigator run sync_org.yaml \
   --senv SOURCE_QUAY_USERNAME=source_organization+robot_accnt_read \
   --senv SOURCE_QUAY_PASSWORD= \
   --senv DESTINATION_QUAY_ORGANIZATION=destination_organization \
-  --senv DESTINATION_QUAY_USENAME=destination_organization+robot_accnt_write \
+  --senv DESTINATION_QUAY_USERNAME=destination_organization+robot_accnt_write \
   --senv DESTINATION_QUAY_HOSTNAME=registry02-quay314.lab.localdomain:8886 \
   --senv DESTINATION_QUAY_TOKEN= \
   --mode=stdout
