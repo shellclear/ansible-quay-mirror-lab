@@ -1,7 +1,7 @@
 ---
 # SOURCE
 source_quay_hostname: "registry01-quay314.lab.localdomain:8885"
-source_quay_token: "" # oauth app token perms: <repo:read> # notsecret
+source_quay_token: "" # notsecret # oauth app token perms: <repo:read>
 source_quay_username: "source_organization+robot_accnt_read" # robotaccount
 source_quay_password: "" # notsecret # robotaccount perms: read 
 source_quay_organization: "source_organization"
