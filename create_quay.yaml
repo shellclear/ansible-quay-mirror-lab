@@ -1,57 +1,57 @@
 ---
-- name: Deploy Red Hat Quay Enterprise (PoC)
-  hosts: all
-  connection: local
+- name: "Deploy Red Hat Quay Enterprise (PoC)"
+  hosts: "all"
+  connection: "local"
 
   tasks:
-    - name: Validate x64 Architecture
+    - name: "Validate x64 Architecture"
       assert:
         that: ansible_facts["architecture"] == "x86_64"
         fail_msg: "The system architecture must be x86_64 (found: {{ ansible_facts['architecture'] }})."
 
-    - name: Validate Memory (Minimum 4GB)
+    - name: "Validate Memory (Minimum 4GB)"
       assert:
         that: ansible_facts["memtotal_mb"] >= 4096
         fail_msg: "The system requires at least 4GB of RAM."
 
-    - name: Validate CPU (Minimum 2 CPUs)
+    - name: "Validate CPU (Minimum 2 CPUs)"
       assert:
         that: ansible_facts["processor_vcpus"] >= 2
         fail_msg: "The system requires at least 2 CPUs."
 
-    - name: Collect disk mount information
+    - name: "Collect disk mount information"
       setup:
         filter: ansible_facts["mounts"]
 
-    - name: Validate Disk Space (Minimum 30GB free on /)
+    - name: "Validate Disk Space (Minimum 30GB free on /)"
       assert:
         that: item.size_available > 32212254720
         fail_msg: "The system requires at least 30GB of free disk space."
       when: item.mount == '/'
       loop: "{{ ansible_facts['mounts'] }}"
 
-    - name: Install required RPM packages (podman and container-tools)
+    - name: "Install required RPM packages (podman and container-tools)"
       become: true
       dnf:
         name:
-          - podman
-        state: present
+          - "podman"
+        state: "present"
 
-    - name: Add DNS mapping in /etc/hosts
+    - name: "Add DNS mapping in /etc/hosts"
       become: true
       lineinfile:
-        path: /etc/hosts
+        path: "/etc/hosts"
         line: "{{ quay_ip }}  {{ quay_fqdn }} {{ quay_hostname }}"
-        state: present
+        state: "present"
 
     - name: Create Podman internal network for container communication
       containers.podman.podman_network:
         name: "{{ quay_network_name }}"
         state: present
 
-    - name: Create Podman Volumes
+    - name: "Create Podman Volumes"
       containers.podman.podman_volume:
-        state: present
+        state: "present"
         name: "{{ item }}"
       loop:
         - "{{ quay_config_vol }}"
@@ -59,25 +59,25 @@
         - "{{ quay_redis_vol }}"
         - "{{ quay_storage_vol }}"
 
-    - name: Create temporary staging directory on the host
+    - name: "Create temporary staging directory on the host"
       file:
         path: "{{ tmp_config_staging }}"
-        state: directory
+        state: "directory"
         mode: '0755'
 
-    - name: Copy TLS Certificate to staging
+    - name: "Copy TLS Certificate to staging"
       copy:
         src: "{{ tls_cert_src_path }}"
         dest: "{{ tmp_config_staging }}/ssl.cert"
         mode: '0644'
 
-    - name: Copy TLS Private Key to staging
+    - name: "Copy TLS Private Key to staging"
       copy:
         src: "{{ tls_key_src_path }}"
         dest: "{{ tmp_config_staging }}/ssl.key"
         mode: '0600'
 
-    - name: Create base config.yaml in staging
+    - name: "Create base config.yaml in staging"
       copy:
         dest: "{{ tmp_config_staging }}/config.yaml"
         content: |
@@ -131,7 +131,7 @@
 
         mode: '0644'
 
-    - name: Inject files from staging to named volume using ephemeral container
+    - name: "Inject files from staging to named volume using ephemeral container"
       ansible.builtin.command: >
         podman run --rm
         -v {{ tmp_config_staging }}:/staging:Z
@@ -140,17 +140,17 @@
         /bin/sh -c "cp /staging/config.yaml /staging/ssl.cert /staging/ssl.key /conf/stack/ && chown -R 1001:0 /conf/stack && chmod 0775 /conf/stack && chmod 0644 /conf/stack/config.yaml /conf/stack/ssl.cert && chmod 0600 /conf/stack/ssl.key"
       changed_when: true
 
-    - name: Remove temporary staging directory
+    - name: "Remove temporary staging directory"
       file:
         path: "{{ tmp_config_staging }}"
-        state: absent
+        state: "absent"
 
-    - name: Start Database container (PostgreSQL)
+    - name: "Start Database container (PostgreSQL)"
       containers.podman.podman_container:
         name: "{{ quay_hostname }}-postgresql-quay"
         image: "{{ image_postgres }}"
-        state: started
-        restart_policy: always
+        state: "started"
+        restart_policy: "always"
         env:
           POSTGRESQL_USER: "{{ db_user }}"
           POSTGRESQL_PASSWORD: "{{ db_password }}"
@@ -160,39 +160,39 @@
         volume:
           - "{{ quay_db_vol }}:/var/lib/pgsql/data:Z"
 
-    - name: Wait for PostgreSQL to start and accept connections
+    - name: "Wait for PostgreSQL to start and accept connections"
       ansible.builtin.command: "podman exec {{ quay_hostname }}-postgresql-quay pg_isready -U {{ db_user }} -d {{ db_name }}"
-      register: pg_ready
+      register: "pg_ready"
       until: pg_ready.rc == 0
       retries: 10
       delay: 5
       changed_when: false
 
-    - name: Enable pg_trgm extension in PostgreSQL
+    - name: "Enable pg_trgm extension in PostgreSQL"
       ansible.builtin.command: >
         podman exec {{ quay_hostname }}-postgresql-quay psql -U {{ db_user }} -d {{ db_name }} -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-      register: pg_ext
+      register: "pg_ext"
       changed_when: "'CREATE EXTENSION' in pg_ext.stdout"
       failed_when: pg_ext.rc != 0
 
-    - name: Start Redis container
+    - name: "Start Redis container"
       containers.podman.podman_container:
         name: "{{ quay_hostname }}-redis-quay"
         image: "{{ image_redis }}"
-        state: started
-        restart_policy: always
+        state: "started"
+        restart_policy: "always"
         env:
          REDIS_PASSWORD: "{{ redis_password }}"
         network: "{{ quay_network_name }}"
         volume:
           - "{{ quay_redis_vol }}:/data"
 
-    - name: Start Quay Registry Enterprise container
+    - name: "Start Quay Registry Enterprise container"
       containers.podman.podman_container:
         name: "{{ quay_hostname }}-quay-registry"
         image: "{{ image_quay }}"
-        state: started
-        restart_policy: always
+        state: "started"
+        restart_policy: "always"
         ports:
           - "{{ https_port }}:8443"
         network: "{{ quay_network_name }}"
@@ -200,13 +200,13 @@
           - "{{ quay_config_vol }}:/conf/stack"
           - "{{ quay_storage_vol }}:/datastorage"
 
-    - name: Start Quay Mirror Worker container
+    - name: "Start Quay Mirror Worker container"
       containers.podman.podman_container:
         name: "{{ quay_hostname }}-quay-mirror"
         image: "{{ image_quay }}"
-        state: started
-        restart_policy: always
-        command: repomirror
+        state: "started"
+        restart_policy: "always"
+        command: "repomirror"
         network: "{{ quay_network_name }}"
         volume:
           - "{{ quay_config_vol }}:/conf/stack:z"

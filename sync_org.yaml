@@ -47,7 +47,7 @@
 
         done
 
-      register: source_quay_organization_repos_list
+      register: "source_quay_organization_repos_list"
 
     - name: "Set source repolist"
       ansible.builtin.set_fact:
@@ -83,7 +83,7 @@
 
         done
 
-      register: destionation_quay_organization_repos_list
+      register: "destionation_quay_organization_repos_list"
 
     - name: "Set destination repolist"
       ansible.builtin.set_fact:
@@ -97,7 +97,7 @@
 
     # - ansible.builtin.pause:
 
-    - name: 3. GUARDRAIL - Abort if Org A returns empty
+    - name: "GUARDRAIL - Abort if Org A returns empty"
       assert:
         that:
           - repolist_source is defined
@@ -105,7 +105,7 @@
         fail_msg: "CAUTION: Org A returned 0 repositories at source. Aborting entire execution."
       when: repolist_destination | default([]) | length > 0
 
-    - name: "4. Identify orphan and common repositories"
+    - name: "Identify orphan and common repositories"
       set_fact:
         repos_to_delete: "{{ repolist_destination | difference(repolist_source) }}"
         common_repos: "{{ repolist_destination | intersect(repolist_source) }}"
@@ -118,12 +118,12 @@
 
     # - ansible.builtin.pause:
 
-    - name: "5. Remove entire repositories in B that no longer exist in A"
+    - name: "Remove entire repositories in B that no longer exist in A"
       infra.quay_configuration.quay_repository:
         quay_host: "{{ _destination_quay_hostname }}"
         quay_token: "{{ _destination_quay_token }}"
         name: "{{ _destination_quay_organization }}/{{ item }}"
-        state: absent
+        state: "absent"
         verify_ssl: false
       loop: "{{ repos_to_delete }}"
       when: repos_to_delete | length > 0

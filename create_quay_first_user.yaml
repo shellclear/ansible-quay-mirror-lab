@@ -1,21 +1,21 @@
 ---
-- name: Bootstrapping a fresh Quay Container Registry installation
-  hosts: all
+- name: "Bootstrapping a fresh Quay Container Registry installation"
+  hosts: "all"
   connection: "local"
 
   tasks:
-    - name: Ensure the initial user exists
+    - name: "Ensure the initial user exists"
       infra.quay_configuration.quay_first_user:
-        username: quayadmin
-        email: quayadmin@lab.localdomain
-        password: password
+        username: "quayadmin"
+        email: "quayadmin@lab.localdomain"
+        password: password # notsecret
         create_token: true
-        quay_host: https://{{ quay_fqdn }}:{{ https_port }}
+        quay_host: "https://{{ quay_fqdn }}:{{ https_port }}"
         validate_certs: false
-      register: result
+      register: "result"
 
     # The token is valid for 2 hours and 30 minutes
-    - name: Display the generated OAuth access token
+    - name: "Display the generated OAuth access token"
       debug:
         msg: "Access token: {{ result['access_token'] }}"
 ...

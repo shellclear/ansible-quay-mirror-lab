@@ -50,10 +50,7 @@
 
         done
 
-      register: source_quay_organization_repos_list
-
-    - ansible.builtin.debug:
-        var: source_quay_organization_repos_list
+      register: "source_quay_organization_repos_list"
 
     - ansible.builtin.debug:
         var: source_quay_organization_repos_list.stdout_lines

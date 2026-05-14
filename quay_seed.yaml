@@ -1,6 +1,6 @@
 ---
-- name: Seed Quay Container Registry installation
-  hosts: all
+- name: "Seed Quay Container Registry installation"
+  hosts: "all"
   connection: "local"
 
   module_defaults:
@@ -10,22 +10,22 @@
       validate_certs: false
 
   tasks:
-    - name: Ensure the organization exists
+    - name: "Ensure the organization exists"
       infra.quay_configuration.quay_organization:
         name: "{{ quay_organization }}"
 
-    - name: Ensure the robot accounts exist
+    - name: "Ensure the robot accounts exist"
       infra.quay_configuration.quay_robot:
         name: "{{ quay_organization }}+{{ item['name'] }}"
       loop: "{{ quay_org_robots }}"
-      register: robot_details
+      register: "robot_details"
 
     - ansible.builtin.debug:
         msg:
           - "Robot token: {{ robot_details['results'][0]['name'] }}"
           - "Robot token: {{ robot_details['results'][0]['token'] }}"
 
-    - name: Ensure the teams exist
+    - name: "Ensure the teams exist"
       infra.quay_configuration.quay_team:
         organization: "{{ quay_organization }}"
         name: "{{ team['name'] }}"
@@ -35,7 +35,7 @@
       loop_control:
         loop_var: "team"
 
-    - name: Ensure the repositories exist
+    - name: "Ensure the repositories exist"
       when: quay_organization_repos is defined and (quay_organization_repos | length > 0)
       infra.quay_configuration.quay_repository:
         name: "{{ quay_organization }}/{{ item['name'] }}"
@@ -43,24 +43,24 @@
         perms: "{{ item['perms'] | default(omit) }}"
       loop: "{{ quay_organization_repos | default([]) }}"
 
-    - name: Ensure the ansible application exists
+    - name: "Ensure the ansible application exists"
       infra.quay_configuration.quay_application:
         organization: "{{ quay_organization }}"
-        name: ansible
-        state: present
-      register: app_details
+        name: "ansible"
+        state: "present"
+      register: "app_details"
 
-    - name: Generate an OAuth access token for the user
+    - name: "Generate an OAuth access token for the user"
       infra.quay_configuration.quay_api_token:
         quay_username: "quayadmin"
-        quay_password: "password"
+        quay_password: "password" # notsecret
         client_id: "{{ app_details['client_id'] }}"
         rights: "{{ quay_api_token_perms }}"
         quay_host: "{{ 'https://' + quay_hostname }}"
         validate_certs: false
-      register: token_details
+      register: "token_details"
 
-    - name: Display the new OAuth access token
+    - name: "Display the new OAuth access token"
       ansible.builtin.debug:
         msg: "The OAuth access token is: {{ token_details['access_token'] }}"
 ...

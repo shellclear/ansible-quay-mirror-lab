@@ -13,7 +13,7 @@
     - name: "Ensure the directory exists"
       ansible.builtin.file:
         path: "{{ playbook_dir }}/certificates/"
-        state: directory
+        state: "directory"
         mode: '0755'
 
     - name: "Create CA private key"
