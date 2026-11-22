@@ -108,6 +108,7 @@
           DISTRIBUTED_STORAGE_DEFAULT_LOCATIONS: []
           SUPER_USERS:
             - quayadmin
+          FEATURE_SUPERUSERS_FULL_ACCESS: true
           FEATURE_MAILING: false
           FEATURE_USER_INITIALIZE: true
           FEATURE_REPO_MIRROR: true
