@@ -17,4 +17,4 @@ podman rm -f registry01-quay317-postgresql-quay \
              registry01-quay314-quay-mirror \
              registry02-quay314-quay-mirror
 
-podman volume prune -a
+podman volume prune -fa
